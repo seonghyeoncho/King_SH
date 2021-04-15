@@ -11,12 +11,12 @@
 #### linkedList
 - 회원 관리 코드
 
- - 이름: string
- - id: string
- - password: string
- - point: double
- - rank: int
-- state: boolean || int || else
+    - 이름: string
+    - id: string
+    - password: string
+    - point: double
+    - rank: int
+    - state: boolean || int || else
 
 - 링크드 리스트
 
