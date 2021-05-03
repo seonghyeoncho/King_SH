@@ -31,10 +31,13 @@ void updateNode(void);
 void insertNode(struct Node*);
 
 void showPlayer(void);
+void loginPage(void);
+int getLoginState(char*, char*);
+int isValidId(char*);
+int isValidPassword(char*, int);
+
 
 struct Node* head = NULL;
-
-
 
 int main() {
     //test code
@@ -52,7 +55,10 @@ int main() {
     tempNode -> next = NULL;
     insertNode(tempNode);
 
+
     showPlayer();
+
+    loginPage();
     updateNode();
     showPlayer();
 
@@ -61,6 +67,69 @@ int main() {
     freeNode();
 
     return 0;
+}
+
+void loginPage() {
+    int loginState;
+    struct Node* cur = head;
+    while (1) {
+        char tempId[100];
+        char tempPassword[100];
+
+        printf("id : ");
+        scanf("%s", tempId);
+        printf("password : ");
+        scanf("%s", tempPassword);
+
+        loginState = getLoginState(tempId, tempPassword);
+        if (loginState == -99999) {
+            printf("error id or password. please again.\n");
+            continue;
+        } else {
+            printf("success!\n");
+            break;
+        }
+    }
+
+    while (loginState--) {
+        cur = cur -> next;
+    }
+    cur -> state = 1;
+    printf("welcom! %s\n", cur -> nickName);
+
+}
+int isValidId(char* id) {
+    struct Node* cur = head;
+    int result = findNode(id);
+    return result;
+}
+int isValidPassword(char* password, int index) {
+    struct Node* cur = head;
+    int tempIndex = index;
+    int result = 0;
+    while (tempIndex--) {
+        cur = cur -> next;
+    }
+    if (!strcmp(password, cur -> password)) {
+        result = 1;
+    } 
+    return result;
+}
+int getLoginState(char* tempId, char* tempPassword) {
+    int result = -99999;
+
+    int checkId = isValidId(tempId);
+    if (checkId == -99999) {
+        return result;
+    } else {
+        result = checkId;
+    }
+    int checkPassword = isValidPassword(tempPassword, checkId);
+    if (!checkPassword) {
+        result = -99999;
+    } 
+
+    return result;
 }
 
 void showPlayer() {
