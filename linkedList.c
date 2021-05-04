@@ -4,7 +4,6 @@
 #include <string.h>
 
 struct Node {
-
     char name[100];
     char nickName[100];
     char id[100];
