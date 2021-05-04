@@ -31,19 +31,26 @@ void updateNode(void);
 void insertNode(struct Node*);
 
 void showPlayer(void);
+
 void loginPage(void);
 int getLoginState(char*, char*);
 int isValidId(char*);
 int isValidPassword(char*, int);
 
+void signupPage();
+int isIdUnique(char*);
+int isNickNameUnique(char*);
 
 struct Node* head = NULL;
 
 int main() {
+
     //test code
     setNode(openFile_R());
     showPlayer();
     deleteNode("chosh000");
+
+    //insert node
     struct Node* tempNode = (struct Node*)malloc(sizeof(struct Node));
     strcpy(tempNode -> nickName, "nick");
     strcpy(tempNode -> name, "조성현2");
@@ -53,29 +60,113 @@ int main() {
     tempNode -> rank = 0;
     tempNode -> state = 0;
     tempNode -> next = NULL;
+
     insertNode(tempNode);
 
-
     showPlayer();
 
+    //sign up page
+    signupPage();
+
+    // login page
     loginPage();
+
     updateNode();
     showPlayer();
-
-
 
     freeNode();
 
     return 0;
 }
 
+int isNickNameUnique(char* nickName) {
+    struct Node* cur = head;
+    int result = 0;
+
+    while (cur != NULL) {
+        if (strcmp(nickName, cur -> nickName) == 0) {
+            result = 1;
+            break;
+        }
+        cur = cur -> next;
+    }
+
+    return result;
+}
+int isIdUnique(char* id) {
+    struct Node* cur = head;
+    int result = 0;
+
+    while (cur != NULL) {
+        if (strcmp(id, cur -> id) == 0) {
+            result = 1;
+            break;
+        }
+        cur = cur -> next;
+    }
+
+    return result;
+}
+void signupPage() {
+    
+    char _id[100];
+    char _password[100];
+    char _name[100];
+    char _nickName[100];
+    
+    while (1) {
+        printf("id: ");
+        scanf("%s", _id);
+
+        if (isIdUnique(_id) != 0) {
+            printf("already exist id.\n");
+            continue;
+        } else {
+            printf("good id!\n");
+        }
+
+        printf("password: ");
+        scanf("%s", _password);
+        break;
+    }
+
+    while (1) {
+        printf("nickname: ");
+        scanf("%s", _nickName);
+         if (isNickNameUnique(_nickName) != 0) {
+            printf("already exist nickname\n");
+            continue;
+        } else {
+            printf("good nickname!\n");
+        }
+        printf("name: ");
+        scanf("%s", _name);
+        break;
+    }
+    
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    strcpy(node -> id, _id);
+    strcpy(node -> password, _password);
+    strcpy(node -> nickName, _nickName);
+    strcpy( node -> name, _name);
+    node -> point = 0;
+    node -> rank = 0;
+    node -> state = 0;
+    node -> next = NULL;
+
+    insertNode(node);
+
+    printf("complete sign up! hello!\n");
+}
+
 void loginPage() {
     int loginState;
     struct Node* cur = head;
-    while (1) {
-        char tempId[100];
-        char tempPassword[100];
+    char tempId[100];
+    char tempPassword[100];
 
+    while (1) {
+        
         printf("id : ");
         scanf("%s", tempId);
         printf("password : ");

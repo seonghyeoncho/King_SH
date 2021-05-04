@@ -1,4 +1,2 @@
 king_slide gegg rerff000 0000 20.000000 1 0
 imsung 조성현 chosh040 0408 200.000000 2 1
-nick 조성현2 qwerty 12345 0.000000 0 0
-nick 조성현2 qwerty 12345 0.000000 0 0
