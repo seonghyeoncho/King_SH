@@ -23,6 +23,7 @@ struct Node {
 // global val
 int ground[W][H];
 int c1, c2;
+int isLogined;
 struct Node* head = NULL;
 
 //func origin
@@ -65,10 +66,73 @@ void HomePage(void);
 int checkGround(void);
 
 //game
+void menu(void);
 
+void programInit(void);
+void signupPage(void);
+void signinPage(void);
+void signoutPage(void);
+void withdrawalPage(void);
+
+void slidingGamePage(void);
+void searchPlayerPage(void);
+void exitPage(void);
 
 int main() {
+    programInit();
+
+    while (1) {
+        menu();
+
+        int page;
+        printf(":");
+        scanf("%d", &page);
+        
+        switch (page) {
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+            case 5:
+                break;
+            case 6:
+                break;
+            case 7:
+                exitPage();
+                return 0;
+            default:
+                printf("not found page.\n");
+        }
+        system("clear");
+    }
+
     return 0;
+}
+void programInit() {
+    isLogined = 0;
+    system("clear");
+    // setNode(openFile_R());
+}
+void exitPage() {
+    printf("see you next time!!\n");
+    // freeNode();
+}
+void menu() {
+    printf("========== SLIDING GAME ==========\n");
+    printf("==================================\n");
+    printf("=              menu              =\n");
+    printf("=           1. sign up           =\n");
+    printf("=           2. sign in           =\n");
+    printf("=           3. start             =\n");
+    printf("=           4. players           =\n");
+    printf("=           5. sign out          =\n");
+    printf("=        6. delete player        =\n");
+    printf("=           7. exit              =\n");
+    printf("==================================\n");
 }
 
 int getch(void){
