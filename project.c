@@ -69,11 +69,12 @@ int checkGround(void);
 void menu(void);
 
 void programInit(void);
+
+//page
 void signupPage(void);
 void signinPage(void);
 void signoutPage(void);
 void withdrawalPage(void);
-
 void slidingGamePage(void);
 void searchPlayerPage(void);
 void exitPage(void);
