@@ -24,6 +24,7 @@ struct Node {
 int ground[W][H];
 int c1, c2;
 int isLogined;
+char loginedId[100];
 struct Node* head = NULL;
 
 //func origin
@@ -40,8 +41,9 @@ int deleteNode(char*);
 int findNode(char*);
 void updateNode(void);
 void insertNode(struct Node*);
+void sortNodes(void);
 
-void showPlayer(void);
+void showAllPlayer(void);
 
 void loginPage(void);
 int getLoginState(char*, char*);
@@ -78,6 +80,7 @@ void withdrawalPage(void);
 void slidingGamePage(void);
 void searchPlayerPage(void);
 void exitPage(void);
+void showAllPlayerPage(void); 
 
 int main() {
     programInit();
@@ -88,23 +91,33 @@ int main() {
         int page;
         printf(":");
         scanf("%d", &page);
+        getch();
         
         switch (page) {
             case 1:
+                signupPage();
                 break;
             case 2:
+                signinPage();
                 break;
             case 3:
+                slidingGamePage();
                 break;
             case 4:
+                searchPlayerPage();
                 break;
             case 5:
+                signoutPage();
                 break;
             case 6:
+                withdrawalPage();
                 break;
             case 7:
                 exitPage();
                 return 0;
+             case 8:
+                showAllPlayerPage();
+                break;  
             default:
                 printf("not found page.\n");
         }
@@ -113,92 +126,10 @@ int main() {
 
     return 0;
 }
-void signinPage() {
-
-}
-void signoutPage() {
-
-}
-void withdrawalPage() {
-
-}
-void slidingGamePage() {
-
-}
-void searchPlayerPage() {
-
-}
-void programInit() {
-    isLogined = 0;
-    system("clear");
-    // setNode(openFile_R());
-}
-void exitPage() {
-    printf("see you next time!!\n");
-    // freeNode();
-}
-void menu() {
-    printf("========== SLIDING GAME ==========\n");
-    printf("==================================\n");
-    printf("=              menu              =\n");
-    printf("=           1. sign up           =\n");
-    printf("=           2. sign in           =\n");
-    printf("=           3. start             =\n");
-    printf("=           4. players           =\n");
-    printf("=           5. sign out          =\n");
-    printf("=        6. delete player        =\n");
-    printf("=           7. exit              =\n");
-    printf("==================================\n");
-}
-
-int getch(void){
-    int ch;
-    struct termios buf;
-    struct termios save;
-
-    tcgetattr(0,&save);
-
-    buf = save;
-    buf.c_lflag &= ~(ICANON | ECHO);
-    buf.c_cc[VMIN] = 1;
-    buf.c_cc[VTIME] = 0;
-
-    tcsetattr(0,TCSAFLUSH,&buf);
-    ch = getchar();
-    tcsetattr(0,TCSAFLUSH,&save);
-    
-    return ch;
-}
-int isNickNameUnique(char* nickName) {
-    struct Node* cur = head;
-    int result = 0;
-
-    while (cur != NULL) {
-        if (strcmp(nickName, cur -> nickName) == 0) {
-            result = 1;
-            break;
-        }
-        cur = cur -> next;
-    }
-
-    return result;
-}
-int isIdUnique(char* id) {
-    struct Node* cur = head;
-    int result = 0;
-
-    while (cur != NULL) {
-        if (strcmp(id, cur -> id) == 0) {
-            result = 1;
-            break;
-        }
-        cur = cur -> next;
-    }
-
-    return result;
-}
 void signupPage() {
-    
+    system("clear");
+    printf("Sign up Page\n");
+
     char _id[100];
     char _password[100];
     char _name[100];
@@ -247,38 +178,146 @@ void signupPage() {
     insertNode(node);
 
     printf("complete sign up! hello!\n");
+
+    getch();
+}
+void signinPage() {
+    if (isLogined == 0) {
+        system("clear");
+        printf("Sign in Page\n");
+
+        int loginState;
+        struct Node* cur = head;
+        char tempId[100];
+        char tempPassword[100];
+
+        while (1) {
+            
+            printf("id : ");
+            scanf("%s", tempId);
+            printf("password : ");
+            scanf("%s", tempPassword);
+
+            loginState = getLoginState(tempId, tempPassword);
+            if (loginState == -99999) {
+                printf("error id or password. please again.\n");
+                continue;
+            } else {
+                printf("success!\n");
+                break;
+            }
+        }
+
+        while (loginState--) {
+            cur = cur -> next;
+        }
+        cur -> state = 1;
+
+        isLogined = 1;
+        strcpy(loginedId, cur -> id);
+        printf("welcom! %s\n", cur -> nickName);
+
+    } else {
+        printf("already logined! back to menu\n");
+    }
+    getch();
+}
+void signoutPage() {
+    char ans;
+    if (isLogined == 1) {
+        printf("Do you want to sign out? [y/n]: ");
+        scanf("%c", &ans);
+        getch();
+        if (ans == 'y') {
+            isLogined = 0;
+            struct Node* cur = head;
+            while (1) {
+                if (strcmp(loginedId, cur -> id)) {
+                    cur -> state = 0;
+                    break;
+                } else {
+                    cur = cur -> next;
+                }
+            }
+            printf("bye %s\n", cur -> name);
+        } else if (ans == 'n') {
+            printf("back to menu.\n");
+        } else {
+            printf("wrong answer.\n ");
+        }
+    } else {
+        printf("Not logined. Please login first.\n");
+    }
+
+    getch();
+}
+void withdrawalPage() {
+
+}
+void slidingGamePage() {
+
+}
+void searchPlayerPage() {
+    
+}
+void programInit() {
+    isLogined = 0;
+    system("clear");
+    setNode(openFile_R());
+}
+void exitPage() {
+    system("clear");
+    printf("see you next time!!\n");
+    freeNode();
+}
+void showAllPlayerPage() {
+    showAllPlayer();
+}
+void menu() {
+    printf("========== SLIDING GAME ==========\n");
+    isLogined == 0 ? printf("======================== not login\n") : printf("============================ login\n");
+    printf("==================================\n");
+    printf("=              menu              =\n");
+    printf("=           1. sign up           =\n");
+    printf("=           2. sign in           =\n");
+    printf("=           3. start             =\n");
+    printf("=           4. players           =\n");
+    printf("=           5. sign out          =\n");
+    printf("=        6. delete player        =\n");
+    printf("=           7. exit              =\n");
+    printf("=      8. show all players       =\n");
+    printf("==================================\n");
 }
 
-void loginPage() {
-    int loginState;
+int isNickNameUnique(char* nickName) {
     struct Node* cur = head;
-    char tempId[100];
-    char tempPassword[100];
+    int result = 0;
 
-    while (1) {
-        
-        printf("id : ");
-        scanf("%s", tempId);
-        printf("password : ");
-        scanf("%s", tempPassword);
-
-        loginState = getLoginState(tempId, tempPassword);
-        if (loginState == -99999) {
-            printf("error id or password. please again.\n");
-            continue;
-        } else {
-            printf("success!\n");
+    while (cur != NULL) {
+        if (strcmp(nickName, cur -> nickName) == 0) {
+            result = 1;
             break;
         }
-    }
-
-    while (loginState--) {
         cur = cur -> next;
     }
-    cur -> state = 1;
-    printf("welcom! %s\n", cur -> nickName);
 
+    return result;
 }
+int isIdUnique(char* id) {
+    struct Node* cur = head;
+    int result = 0;
+
+    while (cur != NULL) {
+        if (strcmp(id, cur -> id) == 0) {
+            result = 1;
+            break;
+        }
+        cur = cur -> next;
+    }
+
+    return result;
+}
+
 int isValidId(char* id) {
     struct Node* cur = head;
     int result = findNode(id);
@@ -312,16 +351,20 @@ int getLoginState(char* tempId, char* tempPassword) {
 
     return result;
 }
-void showPlayer() {
+void showAllPlayer() {
+    system("clear");
     struct Node* cur = head;
-
+    printf("Show All Players\n");
     while (1) {
         printf("nick name: %s\n", cur -> nickName);
         printf("point: %lf\n", cur -> point);
         printf("rank: %d\n", cur -> rank);
+        printf("==================================\n");
         if(cur -> next == NULL) break;
         else cur = cur -> next;
     };
+    getch();
+    getch();
 }
 void setNode(FILE* f) {
     struct Node* cur;
@@ -419,7 +462,9 @@ void insertNode(struct Node* data) {
     }
     cur -> next = data;
 }
+void sortNodes() {
 
+}
 FILE* openFile_W() {
     FILE *f;
 
@@ -445,4 +490,23 @@ FILE* openFile_R() {
     }   
 
     return 0;
+}
+
+int getch(void){
+    int ch;
+    struct termios buf;
+    struct termios save;
+
+    tcgetattr(0,&save);
+
+    buf = save;
+    buf.c_lflag &= ~(ICANON | ECHO);
+    buf.c_cc[VMIN] = 1;
+    buf.c_cc[VTIME] = 0;
+
+    tcsetattr(0,TCSAFLUSH,&buf);
+    ch = getchar();
+    tcsetattr(0,TCSAFLUSH,&save);
+    
+    return ch;
 }
