@@ -41,7 +41,6 @@ int main(){
 void HomePage(){
 
     printf("Slide Puzzle Game!!");
-
     
 }
 

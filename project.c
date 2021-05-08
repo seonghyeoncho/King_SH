@@ -78,9 +78,10 @@ void signinPage(void);
 void signoutPage(void);
 void withdrawalPage(void);
 void slidingGamePage(void);
-void searchPlayerPage(void);
+void playerPage(void);
+void playerPageForSerach();
+void playerPageForShowAll();
 void exitPage(void);
-void showAllPlayerPage(void); 
 
 int main() {
     programInit();
@@ -104,7 +105,7 @@ int main() {
                 slidingGamePage();
                 break;
             case 4:
-                searchPlayerPage();
+                playerPage();
                 break;
             case 5:
                 signoutPage();
@@ -115,9 +116,6 @@ int main() {
             case 7:
                 exitPage();
                 return 0;
-             case 8:
-                showAllPlayerPage();
-                break;  
             default:
                 printf("not found page.\n");
         }
@@ -192,7 +190,6 @@ void signinPage() {
         char tempPassword[100];
 
         while (1) {
-            
             printf("id : ");
             scanf("%s", tempId);
             printf("password : ");
@@ -207,7 +204,6 @@ void signinPage() {
                 break;
             }
         }
-
         while (loginState--) {
             cur = cur -> next;
         }
@@ -228,9 +224,11 @@ void signoutPage() {
         printf("Do you want to sign out? [y/n]: ");
         scanf("%c", &ans);
         getch();
+
         if (ans == 'y') {
             isLogined = 0;
             struct Node* cur = head;
+
             while (1) {
                 if (strcmp(loginedId, cur -> id)) {
                     cur -> state = 0;
@@ -252,13 +250,131 @@ void signoutPage() {
     getch();
 }
 void withdrawalPage() {
+    if (isLogined != 0) {
+        struct Node* cur = head;
 
+        while (1) {
+            if (strcmp(loginedId, cur -> id)) {
+                break;
+            } else {
+                cur = cur -> next;
+            }
+        }
+
+        char c;
+        printf("정말 회원을 탈퇴하시겠습니까? [y/n]: ");
+        scanf("%c", &c);
+
+        if (c == 'y') {
+            if (isLogined == 1) {
+                isLogined = 0;
+                strcpy(loginedId, " ");
+            }
+            deleteNode(loginedId);
+            printf("회원 탈퇴가 완료되었습니다.");
+        } else if (c == 'n') {
+            printf("회원 탈퇴를 취소합니다. 메뉴화면으로 돌아갑니다.");
+        } else {
+            printf("잘못된 입력입니다. 메뉴화면으로 돌아갑니다.");
+        }
+    } else {
+        printf("로그인 상태가 아닙니다.\n");
+    }
+     getch();
 }
 void slidingGamePage() {
+    initGround();
+    setRandomGround();
 
+    system("clear");
+    printf("Slide Puzzle Game\n");
+    sleep(3);
+    system("clear");
+    if (isLogined != 0) {
+        printf("환영합니다! %s\n", loginedId);
+        sleep(3);
+    } else {
+        char _ans;
+        printf("로그인 상태가 아닙니다. 게임 결과는 저장되지 않습니다. 계속하시겠습니까?[y/n]:" );
+        scanf("%c", &_ans);
+
+        if (_ans == 'y') {
+            printf("게임을 시작합니다.\n");
+        } else if (_ans == 'n'){
+            printf("게임으로 돌아갑니다.\n");
+        } else {
+            printf("잘못된 입력입니다. 게임으로 돌아갑니다.\n");
+
+        }
+    }
+    slideGame();
 }
-void searchPlayerPage() {
-    
+void playerPage() {
+    system("clear");
+
+    int select;
+    printf("============= PLAYER =============\n");
+    printf("==================================\n");
+    printf("= 1. search player 2. all player =\n");
+    printf("==================================\n");
+
+    scanf("%d", &select);
+
+    while (1) {
+        if (select == 1) {
+            playerPageForSerach();
+            break;
+        } else if (select == 2) {
+            playerPageForShowAll();
+            break;
+        } else {
+            printf("잘못된 입력입니다. 다시입력해주세요\n");
+            break;
+        }
+    }
+}
+void playerPageForSerach() {
+    char inputForserach[100];
+    system("clear");
+    while (1) {
+        system("clear");
+        printf("search(exit: 0):");
+        scanf("%s", inputForserach);
+
+        if (strcmp(inputForserach, "0") == 0) {
+            printf("exit\n");
+            break;
+        } else {
+            struct Node* cur = head;
+            int isExist = 0;
+            while (cur != NULL) {
+                if (strstr(cur -> nickName, inputForserach) != NULL) {
+                    isExist = 1;
+                }
+                cur  = cur -> next;
+            }
+            if (isExist != 0) {
+                printf("|  Rank  |  NickName  |  Point  |\n");
+                    while (cur != NULL) {
+                    if (strstr(cur -> nickName, inputForserach) != NULL) {
+                        printf("    %d       %.2lf    %s    \n", cur -> rank, cur -> point, cur -> nickName);
+                    }
+                    cur  = cur -> next;
+                }
+            } else {
+                printf("찾으시는 플레이어가 없습니다.\n");
+            }
+        }
+        getch();
+        getch();
+    }
+    getch();
+}
+void playerPageForShowAll() {
+    system("clear");
+    printf("|  Rank  |  NickName  |  Point  |\n");
+    showAllPlayer();
+    getch();
 }
 void programInit() {
     isLogined = 0;
@@ -274,10 +390,12 @@ void showAllPlayerPage() {
     showAllPlayer();
 }
 void menu() {
+    printf("==================================\n");
     printf("========== SLIDING GAME ==========\n");
-    isLogined == 0 ? printf("======================== not login\n") : printf("============================ login\n");
+    isLogined == 0 ? printf("======================== not login\n") : printf("======================== %s\n", loginedId);
     printf("==================================\n");
     printf("=              menu              =\n");
+    printf("==================================\n");
     printf("=           1. sign up           =\n");
     printf("=           2. sign in           =\n");
     printf("=           3. start             =\n");
@@ -285,8 +403,139 @@ void menu() {
     printf("=           5. sign out          =\n");
     printf("=        6. delete player        =\n");
     printf("=           7. exit              =\n");
-    printf("=      8. show all players       =\n");
     printf("==================================\n");
+}
+void initGround(){
+    int n = 1;
+    for(int i = 0 ;i<H;i++){
+        for(int k = 0;k<W;k++){
+            
+            ground[i][k] = n;
+            n++;
+        }
+    }
+    ground[W-1][H-1] = 0;
+}
+void setRandomGround(){
+    
+    srand(time(NULL));
+
+    int n = 256;
+    char c;
+    
+    while(n--){
+        int i = rand()%4;
+        switch(i){
+            case 0:
+                c = 'j';
+                break;
+            case 1:
+                c = 'i';
+                break;
+            case 2:
+                c = 'k';
+                break;
+            case 3:
+                c = 'l';
+                break;
+            default:
+                break;
+        }
+        controlGround(c);
+    }
+}
+void printGround(){
+    printf("          ");
+
+    for(int i = 0 ;i<H;i++){
+        for(int k = 0;k<W;k++){
+            if(ground[i][k] != 0) printf("%-4d",ground[i][k]);
+            else printf("    ");
+        }
+        printf("\n          ");
+    }
+    
+}
+int checkGround(){
+    int prev = ground[0][0],cur;
+    
+    if(prev != 1) return 0;
+    
+    for(int i = 0;i<H;i++){
+        for(int k = 0;k<W;k++){
+            cur = ground[i][k];
+
+            if(cur == 1) continue;
+            if(prev - cur == 15) return 1;
+            if(cur - prev != 1) return 0;
+            else prev = cur;
+        }
+    }
+    
+    return 0;
+}
+int controlGround(char c){
+    int i,k;   
+        
+    for(int j = 0 ;j<H;j++){
+        for(int h = 0;h<W;h++){
+            if(ground[j][h] == 0){
+                i = j;
+                k = h;
+            }
+        }
+    }
+        
+    if(c == '0') return 0;
+        
+    switch (c) {
+        case 'j'://L
+            if(k != 3 && ground[i][k+1] != 0){   
+                ground[i][k] = ground[i][k + 1];
+                ground[i][k+1] = 0;    
+            }
+            break;
+        case 'i'://U
+            if(i != 3 && ground[i+1][k] != 0){    
+                ground[i][k] = ground[i+1][k];
+                ground[i+1][k] = 0;    
+            }
+            break;
+        case 'k'://D
+            if(i != 0 && ground[i-1][k] != 0){     
+                ground[i][k] = ground[i-1][k];
+                ground[i-1][k] = 0;  
+            }
+            break;
+        case 'l'://R
+            if(k != 0 && ground[i][k-1] != 0){  
+                ground[i][k] = ground[i][k - 1];
+                ground[i][k-1] = 0;  
+            }
+            break;
+        default:
+            break;
+    }
+        
+    return 1; 
+}
+void slideGame(){
+    while(1){
+        printGround();
+
+        char c = getch();
+
+        if(!controlGround(c)) break;
+
+        system("clear");
+
+        if(checkGround()) {
+            printGround();
+            printf("축하합니다!\n");
+            sleep(3);
+            break;
+        }
+    }
 }
 
 int isNickNameUnique(char* nickName) {
@@ -300,7 +549,6 @@ int isNickNameUnique(char* nickName) {
         }
         cur = cur -> next;
     }
-
     return result;
 }
 int isIdUnique(char* id) {
@@ -314,10 +562,8 @@ int isIdUnique(char* id) {
         }
         cur = cur -> next;
     }
-
     return result;
 }
-
 int isValidId(char* id) {
     struct Node* cur = head;
     int result = findNode(id);
@@ -352,18 +598,12 @@ int getLoginState(char* tempId, char* tempPassword) {
     return result;
 }
 void showAllPlayer() {
-    system("clear");
     struct Node* cur = head;
-    printf("Show All Players\n");
     while (1) {
-        printf("nick name: %s\n", cur -> nickName);
-        printf("point: %lf\n", cur -> point);
-        printf("rank: %d\n", cur -> rank);
-        printf("==================================\n");
+        printf("    %d       %.2lf    %s    \n", cur -> rank, cur -> point, cur -> nickName);
         if(cur -> next == NULL) break;
         else cur = cur -> next;
     };
-    getch();
     getch();
 }
 void setNode(FILE* f) {
@@ -388,7 +628,7 @@ void setNode(FILE* f) {
     }
 
     fclose(f);
-};
+}
 void freeNode() {
     struct Node* node = head;
     struct Node* tmp = head;
@@ -398,7 +638,7 @@ void freeNode() {
         free(tmp);
         tmp = node;
     };
-};
+}
 int deleteNode(char* id) {
     struct Node* cur = head;
     int result = findNode(id);
@@ -472,7 +712,6 @@ FILE* openFile_W() {
         printf("Error : Can not open file.\n");
         exit(0);
     } else {
-        printf("Success.\n");
         return f;
     }   
 
@@ -485,7 +724,6 @@ FILE* openFile_R() {
         printf("Error : Can not open file.\n");
         exit(0);
     } else {
-        printf("Success.\n");
         return f;
     }   
 
