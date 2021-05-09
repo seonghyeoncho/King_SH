@@ -24,6 +24,8 @@ struct Node {
 int ground[W][H];
 int c1, c2;
 int isLogined;
+int moveCount;
+double playTime;
 char loginedId[100];
 struct Node* head = NULL;
 
@@ -33,13 +35,14 @@ int getch(void);
 //linked list
 FILE *openFile_R(void);
 FILE *openFile_W(void);
+void updateFile(void);
 
 void setNode(FILE*);
 void freeNode(void);
 
 int deleteNode(char*);
 int findNode(char*);
-void updateNode(void);
+void updateNode(char *, int);
 void insertNode(struct Node*);
 void sortNodes(void);
 
@@ -66,6 +69,8 @@ int controlGround(char);
 void HomePage(void);
 
 int checkGround(void);
+
+void showScore(void);
 
 //game
 void menu(void);
@@ -280,7 +285,7 @@ void withdrawalPage() {
     } else {
         printf("로그인 상태가 아닙니다.\n");
     }
-     getch();
+    getch();
 }
 void slidingGamePage() {
     initGround();
@@ -288,26 +293,40 @@ void slidingGamePage() {
 
     system("clear");
     printf("Slide Puzzle Game\n");
-    sleep(3);
+    sleep(1);
     system("clear");
     if (isLogined != 0) {
         printf("환영합니다! %s\n", loginedId);
         sleep(3);
     } else {
         char _ans;
-        printf("로그인 상태가 아닙니다. 게임 결과는 저장되지 않습니다. 계속하시겠습니까?[y/n]:" );
+        printf("로그인 상태가 아닙니다.\n게임 결과는 저장되지 않습니다.\n계속하시겠습니까?[y/n]:" );
         scanf("%c", &_ans);
+        getch();
 
         if (_ans == 'y') {
             printf("게임을 시작합니다.\n");
+            sleep(1);
+            slideGame();
         } else if (_ans == 'n'){
-            printf("게임으로 돌아갑니다.\n");
+            printf("메뉴로 돌아갑니다.\n");
+            sleep(1);
+            
         } else {
-            printf("잘못된 입력입니다. 게임으로 돌아갑니다.\n");
-
+            printf("잘못된 입력입니다. 메뉴로 돌아갑니다.\n");
+            sleep(1);
         }
     }
-    slideGame();
+}
+void showScore() {
+    printf("점수\n");
+    printf("Time: %.3lf Count: %d\n", playTime, moveCount);
+
+    if (isLogined != 0) {
+
+    } else {
+
+    }
 }
 void playerPage() {
     system("clear");
@@ -475,6 +494,7 @@ int checkGround(){
     return 0;
 }
 int controlGround(char c){
+    moveCount++;
     int i,k;   
         
     for(int j = 0 ;j<H;j++){
@@ -520,6 +540,9 @@ int controlGround(char c){
     return 1; 
 }
 void slideGame(){
+    clock_t start, end;
+
+    start = clock();
     while(1){
         printGround();
 
@@ -530,9 +553,14 @@ void slideGame(){
         system("clear");
 
         if(checkGround()) {
+            end = clock();
+            playTime = end - start;
+
             printGround();
+
             printf("축하합니다!\n");
             sleep(3);
+
             break;
         }
     }
@@ -680,7 +708,31 @@ int findNode(char* id) {
 
     return result;
 }
-void updateNode() {
+void updateNode(char *id, int action) {
+    struct Node* cur = head;
+    
+    while (cur != NULL) {
+        if (strcmp(id, cur -> id)) {
+            if (action == 1) {
+                //name
+
+            } else if (action == 2) {
+                //nickname
+            } else if (action == 3) {
+                cur -> point = playTime + moveCount;
+                playTime = 0;
+                moveCount = 0;
+            }
+            break;
+        }
+        cur = cur -> next;
+    }
+
+    if (cur == NULL) {
+        printf("유효하지 않은 id입니다.\n");
+    }
+}
+void updateFile() {
     struct Node* cur = head;
     FILE* f = openFile_W();
 
