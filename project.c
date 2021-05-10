@@ -297,7 +297,10 @@ void slidingGamePage() {
     system("clear");
     if (isLogined != 0) {
         printf("환영합니다! %s\n", loginedId);
-        sleep(3);
+        sleep(1);
+        system("clear");
+        slideGame();
+        showScore();
     } else {
         char _ans;
         printf("로그인 상태가 아닙니다.\n게임 결과는 저장되지 않습니다.\n계속하시겠습니까?[y/n]:" );
@@ -307,7 +310,9 @@ void slidingGamePage() {
         if (_ans == 'y') {
             printf("게임을 시작합니다.\n");
             sleep(1);
+            system("clear");
             slideGame();
+            showScore();
         } else if (_ans == 'n'){
             printf("메뉴로 돌아갑니다.\n");
             sleep(1);
@@ -320,13 +325,11 @@ void slidingGamePage() {
 }
 void showScore() {
     printf("점수\n");
-    printf("Time: %.3lf Count: %d\n", playTime, moveCount);
+    printf("Time: %.3lf Count: %d\n Score: %.3lf", playTime, moveCount, playTime + moveCount);
 
     if (isLogined != 0) {
-
-    } else {
-
-    }
+        updateNode(loginedId, 3);
+    } 
 }
 void playerPage() {
     system("clear");
@@ -473,7 +476,6 @@ void printGround(){
         }
         printf("\n          ");
     }
-    
 }
 int checkGround(){
     int prev = ground[0][0],cur;
